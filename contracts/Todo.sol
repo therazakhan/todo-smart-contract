@@ -11,6 +11,7 @@ contract Todo {
     uint date;
     string description;
     string author;
+    uint dateCompleted;
     bool isDone;
   }
 
@@ -19,27 +20,36 @@ contract Todo {
   mapping(uint => Task) tasks;
 
   // events
-  event TaskCreated(uint, uint, string, string, bool);
+  event TaskCreated(uint, uint, string, string, uint, bool);
+  event ToggleTaskStatus(uint, uint, bool);
 
   function createTask(string memory _description, string memory _author) public {
     lastTaskId++; 
-    tasks[lastTaskId] = Task(lastTaskId, now, _description, _author, false);
+    tasks[lastTaskId] = Task(lastTaskId, now, _description, _author, 0, false);
     taskIds.push(lastTaskId);
-    emit TaskCreated(lastTaskId, now, _description, _author, false);
+    emit TaskCreated(lastTaskId, now, _description, _author, 0, false);
   }
 
-  function getTask(uint id) public view checkIfTaskIdExists(id) returns (
+  function getTask(uint _id) checkIfTaskIdExists(_id) public view returns (
     uint,
     uint,
     string memory,
     string memory,
+    uint,
     bool
   ) {
-    return (id, tasks[id].date, tasks[id].description, tasks[id].author, tasks[id].isDone);
+    return (_id, tasks[_id].date, tasks[_id].description, tasks[_id].author, tasks[_id].dateCompleted, tasks[_id].isDone);
   } 
 
   function getTaskIds() public view returns(uint[] memory) {
     return taskIds;
+  }
+
+  function toggleTask(uint _id) checkIfTaskIdExists(_id) public {
+    Task storage task = tasks[_id];
+    task.isDone = true;
+    task.dateCompleted = task.isDone ? now : 0;
+    emit ToggleTaskStatus(_id, task.dateCompleted, task.isDone);
   }
 
   modifier checkIfTaskIdExists(uint id) {
