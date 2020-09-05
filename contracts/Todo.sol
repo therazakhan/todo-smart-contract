@@ -26,7 +26,8 @@ contract Todo {
     string memory,
     bool
   ) {
-    require(id < 0, 'invalid id');
     return (id, tasks[id].date, tasks[id].description, tasks[id].author, tasks[id].isDone);
   }
+
+  function 
 }
