@@ -12,4 +12,21 @@ contract Todo {
     string author;
     bool isDone;
   }
+
+  Task[] public tasks;
+
+  function createTask(string memory _description, string memory _author) public {
+    tasks.push(Task(tasks.length, now, _description, _author, false));
+  }
+
+  function getTask(uint id) public view returns (
+    uint,
+    uint,
+    string memory,
+    string memory,
+    bool
+  ) {
+    require(id < 0, 'invalid id');
+    return (id, tasks[id].date, tasks[id].description, tasks[id].author, tasks[id].isDone);
+  }
 }
